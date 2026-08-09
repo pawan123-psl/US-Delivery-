@@ -4,6 +4,7 @@ app.py
 Streamlit UI for:
   Tab 1 — 🎫 Ticket Triage Agent          (Task 1)
   Tab 2 — 📋 TAM Account Health Brief     (Task 2)
+  Tab 3 — 📊 Evaluation Harness           (Task 3)
 
 Run:
   streamlit run app.py
@@ -26,8 +27,8 @@ from triage import triage_ticket, triage_ticket_stream
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Triage & TAM Brief Agent",
-    page_icon="🎫",
+    page_title="AI Support Tools",
+    page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -55,6 +56,16 @@ st.markdown("""
     .health-at-risk { background:#fef2f2; color:#b91c1c; padding:4px 10px; border-radius:6px; font-weight:600; }
     .health-healthy { background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:6px; font-weight:600; }
     .health-other   { background:#f1f5f9; color:#475569; padding:4px 10px; border-radius:6px; font-weight:600; }
+
+    /* Task 3 eval harness */
+    .pass-badge  { background:#dcfce7; color:#15803d; padding:3px 10px; border-radius:6px; font-weight:700; display:inline-block; }
+    .fail-badge  { background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:6px; font-weight:700; display:inline-block; }
+    .adv-badge   { background:#fef3c7; color:#92400e; padding:3px 8px; border-radius:6px; font-size:0.78rem; display:inline-block; }
+    .check-pass  { color:#15803d; }
+    .check-fail  { color:#991b1b; }
+    .score-high  { color:#15803d; font-weight:700; }
+    .score-mid   { color:#92400e; font-weight:700; }
+    .score-low   { color:#991b1b; font-weight:700; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -76,7 +87,7 @@ def load_accounts():
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.title("🤖 AI Support Tools")
-    st.caption("Task 1: Ticket Triage  |  Task 2: TAM Brief")
+    st.caption("Task 1: Triage  |  Task 2: TAM Brief  |  Task 3: Eval")
     st.divider()
 
     # Task 1 sidebar controls
@@ -96,7 +107,7 @@ with st.sidebar:
 
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
-tab1, tab2 = st.tabs(["🎫 Ticket Triage", "📋 TAM Account Brief"])
+tab1, tab2, tab3 = st.tabs(["🎫 Ticket Triage", "📋 TAM Account Brief", "📊 Evaluation Harness"])
 
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -407,3 +418,157 @@ with tab2:
             # Task 2 — Raw JSON expander
             with st.expander("🔍 Raw JSON output"):
                 st.json(brief.model_dump())
+
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  TAB 3 — Evaluation Harness  (Task 3)                                      ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+with tab3:
+    st.title("📊 Evaluation Harness")
+    st.caption(
+        "Run the Task 3 evaluation harness directly from the UI. "
+        "Tests both Task 1 (Ticket Triage) and Task 2 (TAM Brief) systematically."
+    )
+
+    # ── Task 3: Configuration ─────────────────────────────────────────────────
+    st.markdown("#### Configuration")
+    col_cfg1, col_cfg2, col_cfg3 = st.columns(3)
+    with col_cfg1:
+        run_t1 = st.checkbox("Run Task 1 tests (6 cases)", value=True)
+    with col_cfg2:
+        run_t2 = st.checkbox("Run Task 2 tests (6 cases)", value=True)
+    with col_cfg3:
+        use_judge = st.checkbox("LLM-as-judge scoring", value=False,
+                                help="Adds ~2s per test but gives richer quality scores")
+
+    st.caption(
+        "⚠️ Each test makes 1–2 live LLM calls. Running all 12 tests takes ~30–120 seconds. "
+        "Disable LLM-as-judge for faster rule-only evaluation."
+    )
+
+    run_eval = st.button(
+        "▶️ Run Evaluation",
+        type="primary",
+        disabled=not (run_t1 or run_t2),
+    )
+
+    # ── Task 3: Run and display results ───────────────────────────────────────
+    if run_eval:
+        from eval_harness import run_evaluation, write_json_report, write_markdown_report
+
+        progress_bar = st.progress(0, text="Starting evaluation…")
+        log_placeholder = st.empty()
+        logs: list[str] = []
+
+        # Task 3 — Run the harness (this makes live LLM calls)
+        with st.spinner("Running evaluation — please wait…"):
+            try:
+                report = run_evaluation(
+                    run_task1=run_t1,
+                    run_task2=run_t2,
+                    use_llm_judge=use_judge,
+                )
+                eval_error = None
+            except Exception as exc:
+                report = None
+                eval_error = str(exc)
+
+        progress_bar.progress(100, text="Complete")
+
+        if eval_error:
+            st.error(f"❌ Evaluation failed: {eval_error}")
+
+        elif report:
+            # Task 3 — Write report files
+            write_json_report(report, "eval_report.json")
+            write_markdown_report(report, "eval_report.md")
+
+            # ── Summary metrics ───────────────────────────────────────────────
+            st.divider()
+            st.markdown("### Results Summary")
+
+            s1, s2, s3, s4 = st.columns(4)
+            s1.metric("Total Tests", report.total_tests)
+            s2.metric("Passed", report.passed)
+            s3.metric("Failed", report.failed)
+            s4.metric("Overall Score", f"{report.overall_score:.3f}")
+
+            sc1, sc2 = st.columns(2)
+            if run_t1:
+                sc1.metric("Task 1 Score", f"{report.task1_score:.3f}")
+            if run_t2:
+                sc2.metric("Task 2 Score", f"{report.task2_score:.3f}")
+
+            st.divider()
+
+            # ── Per-test results table ─────────────────────────────────────────
+            st.markdown("### Per-Test Results")
+
+            for r in report.results:
+                adv_tag = ' <span class="adv-badge">⚠ adversarial</span>' if r.adversarial else ""
+                status_badge = '<span class="pass-badge">✅ PASS</span>' if r.passed else '<span class="fail-badge">❌ FAIL</span>'
+                score_cls = "score-high" if r.quality_score >= 0.8 else "score-mid" if r.quality_score >= 0.6 else "score-low"
+
+                with st.expander(
+                    f"{r.test_id}  |  {r.name}",
+                    expanded=(not r.passed),   # auto-expand failed tests
+                ):
+                    st.markdown(
+                        f"{status_badge}{adv_tag} &nbsp;&nbsp; "
+                        f'<span class="{score_cls}">Score: {r.quality_score:.3f}</span> &nbsp;&nbsp; '
+                        f"⏱ {r.latency_seconds}s",
+                        unsafe_allow_html=True,
+                    )
+
+                    if r.error:
+                        st.error(f"Pipeline error: {r.error}")
+
+                    # Task 3 — Show each rule check
+                    if r.checks:
+                        st.markdown("**Rule checks:**")
+                        for c in r.checks:
+                            icon = "✅" if c.passed else "❌"
+                            st.markdown(
+                                f"{icon} `{c.check_name}` — {c.message}  \n"
+                                f"&nbsp;&nbsp;&nbsp;&nbsp;Expected: `{c.expected[:80]}` | "
+                                f"Actual: `{c.actual[:80]}`"
+                            )
+
+                    # Task 3 — LLM judge result if available
+                    if r.llm_judge_score is not None:
+                        st.markdown(
+                            f"🤖 **LLM Judge:** {r.llm_judge_score:.2f} — {r.llm_judge_rationale}"
+                        )
+
+            st.divider()
+
+            # ── Download buttons ──────────────────────────────────────────────
+            st.markdown("### Download Reports")
+            dl1, dl2 = st.columns(2)
+
+            try:
+                with open("eval_report.json", "r", encoding="utf-8") as f:
+                    json_bytes = f.read()
+                dl1.download_button(
+                    "⬇️ Download eval_report.json",
+                    data=json_bytes,
+                    file_name="eval_report.json",
+                    mime="application/json",
+                )
+            except FileNotFoundError:
+                pass
+
+            try:
+                with open("eval_report.md", "r", encoding="utf-8") as f:
+                    md_bytes = f.read()
+                dl2.download_button(
+                    "⬇️ Download eval_report.md",
+                    data=md_bytes,
+                    file_name="eval_report.md",
+                    mime="text/markdown",
+                )
+            except FileNotFoundError:
+                pass
+
+            st.caption(f"Reports also saved to eval_report.json and eval_report.md  |  Generated: {report.generated_at}")

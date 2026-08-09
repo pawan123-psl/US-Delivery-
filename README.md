@@ -16,13 +16,14 @@ A two-task AI system built for internal tooling teams at a B2B SaaS company. It 
 ## Live Demo
 
 ```bash
-# UI — both tasks in one interface
+# UI — all three tasks in one interface
 streamlit run app.py
 ```
 
-Opens at `http://localhost:8501` with two tabs:
+Opens at `http://localhost:8501` with three tabs:
 - **🎫 Ticket Triage** — paste any ticket, get instant structured triage
 - **📋 TAM Account Brief** — pick an account, get a full QBR-ready brief
+- **📊 Evaluation Harness** — run Task 3 eval directly from the browser, download reports
 
 ---
 
@@ -312,9 +313,12 @@ Task-1/
 │
 │  ── Shared API & UI ───────────────────────────────────────────────
 ├── api.py             # FastAPI: /triage · /triage/stream · /brief/{id} · /accounts · /health
-├── app.py             # Streamlit UI: Tab 1 (Triage) + Tab 2 (TAM Brief)
+├── app.py             # Streamlit UI: Tab 1 (Triage) + Tab 2 (TAM Brief) + Tab 3 (Eval)
 │
-│  ── Config & CI ───────────────────────────────────────────────────
+│  ── Task 3: Evaluation Harness ───────────────────────────────────
+├── eval_harness.py    # 12 test cases (6 per task), rule-based + LLM-as-judge scoring
+│                      # Outputs eval_report.json + eval_report.md
+│
 ├── .github/
 │   └── workflows/
 │       └── eval.yml   # GitHub Actions CI — smoke tests on every push/PR
@@ -329,7 +333,7 @@ Task-1/
 
 | Bonus | Marks | Status | Implementation |
 |---|---|---|---|
-| Streamlit UI | +5 | ✅ | `app.py` — two-tab UI covering Task 1 and Task 2 |
+| Streamlit UI | +5 | ✅ | `app.py` — three-tab UI: Ticket Triage, TAM Brief, Evaluation Harness |
 | Streaming output | +3 | ✅ | `triage_ticket_stream()` in `triage.py`; SSE endpoint `POST /triage/stream`; `--stream` CLI flag |
 | GitHub Actions CI | +2 | ✅ | `.github/workflows/eval.yml` — runs on every push and PR |
 | Prompt versioning | +2 | ✅ | `PROMPT_REGISTRY` in `prompts.py` — every prompt has `version` + `changelog`; version echoed in every output |
@@ -397,6 +401,63 @@ At 10× volume the first bottleneck is **Groq API rate limits** (free tier: ~30 
 
 ---
 
+## Task 3 — Evaluation Harness
+
+### Test cases
+
+**Task 1 (6 tests including 1 adversarial):**
+
+| ID | Name | Type |
+|---|---|---|
+| T1-TC1 | P1 — Production pipeline fully down | Normal |
+| T1-TC2 | SSO group mapping — known KB issue | Normal |
+| T1-TC3 | Billing — invoice seat count discrepancy | Normal |
+| T1-TC4 | AnalyticsHub dashboard timeout | Normal |
+| T1-TC5 | Feature request — bulk export | Normal |
+| T1-TC6-ADV | Vague ticket with no product or error code | **Adversarial** |
+
+**Task 2 (6 tests including 1 adversarial):**
+
+| ID | Name | Type |
+|---|---|---|
+| T2-TC1 | At-Risk account — Omni Consumer Products ($500k ARR) | Normal |
+| T2-TC2 | Healthy account — Wayne Enterprises | Normal |
+| T2-TC3 | Churning account — Pinnacle Systems | Normal |
+| T2-TC4 | New account — Solaris Data | Normal |
+| T2-TC5 | Enterprise At Risk — Vertex Solutions | Normal |
+| T2-TC6-ADV | Non-existent account ID | **Adversarial** |
+
+### Scoring
+
+Each test case is scored 0.0–1.0:
+- **70% rule-based checks** — field presence, urgency match, quote presence, determinism, metadata integrity
+- **30% LLM-as-judge** — contextual quality scored by the same LLM evaluating its own output
+- **Pass threshold:** 0.6 quality score
+- Exit code 1 if any test fails (CI-friendly)
+
+### Run the harness
+
+```bash
+# Full evaluation (both tasks + LLM judge)
+python eval_harness.py
+
+# Rules only — faster, no extra LLM calls
+python eval_harness.py --no-llm-judge
+
+# Task 1 only
+python eval_harness.py --task 1 --no-llm-judge
+
+# Task 2 only
+python eval_harness.py --task 2 --no-llm-judge
+
+# Via the Streamlit UI — Tab 3 "Evaluation Harness"
+streamlit run app.py
+```
+
+Reports are written to `eval_report.json` and `eval_report.md` in the project root.
+
+---
+
 ## Running Everything — Quick Reference
 
 ```bash
@@ -404,7 +465,7 @@ At 10× volume the first bottleneck is **Groq API rate limits** (free tier: ~30 
 cd "d:\Python World\Experiment\Zycus\Task-1"
 
 # ── Verify all imports ────────────────────────────────────
-python -c "import triage; import account_brief; import api; from models import AccountBrief, RiskItem, TriageOutput; print('ALL OK')"
+python -c "import triage; import account_brief; import eval_harness; from models import AccountBrief, RiskItem, TriageOutput; print('ALL OK')"
 
 # ── Task 1 CLI ────────────────────────────────────────────
 python run_triage.py --ticket-id TKT-10000
@@ -417,7 +478,13 @@ python run_brief.py --account-id ACC-3336
 python run_brief.py --account-id ACC-8113
 python run_brief.py --account-id ACC-3336 --json
 
-# ── Streamlit UI (both tasks) ─────────────────────────────
+# ── Task 3 Evaluation Harness ─────────────────────────────
+python eval_harness.py                         # full eval + LLM judge
+python eval_harness.py --no-llm-judge          # rules only (faster)
+python eval_harness.py --task 1 --no-llm-judge # Task 1 only
+python eval_harness.py --task 2 --no-llm-judge # Task 2 only
+
+# ── Streamlit UI (all three tasks) ───────────────────────
 streamlit run app.py
 
 # ── REST API ──────────────────────────────────────────────

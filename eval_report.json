@@ -1,0 +1,774 @@
+{
+  "generated_at": "2026-08-09T11:35:18.748834+00:00",
+  "total_tests": 12,
+  "passed": 12,
+  "failed": 0,
+  "task1_score": 0.941,
+  "task2_score": 0.899,
+  "overall_score": 0.92,
+  "results": [
+    {
+      "test_id": "T1-TC1",
+      "task": 1,
+      "name": "P1 \u2014 Production pipeline fully down (clear critical case)",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "all_fields_present",
+          "passed": true,
+          "expected": "all required fields non-empty",
+          "actual": "present",
+          "message": "All TriageOutput fields must be populated"
+        },
+        {
+          "check_name": "urgency_correct",
+          "passed": true,
+          "expected": "P1",
+          "actual": "P1",
+          "message": "Urgency should be P1 for this ticket type"
+        },
+        {
+          "check_name": "category_correct",
+          "passed": false,
+          "expected": "Bug",
+          "actual": "Performance",
+          "message": "Category should be Bug"
+        },
+        {
+          "check_name": "product_area_relevant",
+          "passed": true,
+          "expected": "one of ['DataBridge']",
+          "actual": "DataBridge Pro / Pipelines",
+          "message": "Product area should reference the correct product/module"
+        },
+        {
+          "check_name": "kb_match_as_expected",
+          "passed": true,
+          "expected": "kb_match.found=True",
+          "actual": "kb_match.found=True",
+          "message": "KB match found status should match expectation"
+        },
+        {
+          "check_name": "draft_response_substantive",
+          "passed": true,
+          "expected": ">50 chars",
+          "actual": "563 chars",
+          "message": "Draft response must be a substantive message"
+        },
+        {
+          "check_name": "urgency_reasoning_present",
+          "passed": true,
+          "expected": ">20 chars",
+          "actual": "388 chars",
+          "message": "Urgency reasoning must explain the classification"
+        },
+        {
+          "check_name": "prompt_version_present",
+          "passed": true,
+          "expected": "non-empty",
+          "actual": "v1.1",
+          "message": "Prompt version must be echoed in output for auditability"
+        }
+      ],
+      "llm_judge_score": 0.9,
+      "llm_judge_rationale": "The triage output accurately assesses the urgency and category of the issue, and the draft response is professional, but could be improved with more specific details about next steps or troubleshooting.",
+      "quality_score": 0.882,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 2.07
+    },
+    {
+      "test_id": "T1-TC2",
+      "task": 1,
+      "name": "SSO group mapping \u2014 known KB issue",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "all_fields_present",
+          "passed": true,
+          "expected": "all required fields non-empty",
+          "actual": "present",
+          "message": "All TriageOutput fields must be populated"
+        },
+        {
+          "check_name": "urgency_correct",
+          "passed": true,
+          "expected": "P2",
+          "actual": "P2",
+          "message": "Urgency should be P2 for this ticket type"
+        },
+        {
+          "check_name": "category_correct",
+          "passed": true,
+          "expected": "Integration",
+          "actual": "Integration",
+          "message": "Category should be Integration"
+        },
+        {
+          "check_name": "product_area_relevant",
+          "passed": true,
+          "expected": "one of ['sso', 'cloudsync', 'securevault', 'authentication']",
+          "actual": "SecureVault / SSO",
+          "message": "Product area should reference the correct product/module"
+        },
+        {
+          "check_name": "kb_match_as_expected",
+          "passed": true,
+          "expected": "kb_match.found=True",
+          "actual": "kb_match.found=True",
+          "message": "KB match found status should match expectation"
+        },
+        {
+          "check_name": "draft_response_substantive",
+          "passed": true,
+          "expected": ">50 chars",
+          "actual": "454 chars",
+          "message": "Draft response must be a substantive message"
+        },
+        {
+          "check_name": "urgency_reasoning_present",
+          "passed": true,
+          "expected": ">20 chars",
+          "actual": "336 chars",
+          "message": "Urgency reasoning must explain the classification"
+        },
+        {
+          "check_name": "prompt_version_present",
+          "passed": true,
+          "expected": "non-empty",
+          "actual": "v1.1",
+          "message": "Prompt version must be echoed in output for auditability"
+        }
+      ],
+      "llm_judge_score": 0.9,
+      "llm_judge_rationale": "The triage output is mostly accurate and professional, but the draft response could be more specific and detailed given the urgency and impact of the issue, and the responder could be Tier-2 or higher due to the complexity of the SSO integration issue.",
+      "quality_score": 0.97,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 1.38
+    },
+    {
+      "test_id": "T1-TC3",
+      "task": 1,
+      "name": "Billing \u2014 invoice seat count discrepancy (P4)",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "all_fields_present",
+          "passed": true,
+          "expected": "all required fields non-empty",
+          "actual": "present",
+          "message": "All TriageOutput fields must be populated"
+        },
+        {
+          "check_name": "urgency_correct",
+          "passed": true,
+          "expected": "P4",
+          "actual": "P4",
+          "message": "Urgency should be P4 for this ticket type"
+        },
+        {
+          "check_name": "category_correct",
+          "passed": true,
+          "expected": "Billing",
+          "actual": "Billing",
+          "message": "Category should be Billing"
+        },
+        {
+          "check_name": "product_area_relevant",
+          "passed": true,
+          "expected": "one of ['billing', 'seat', 'invoice']",
+          "actual": "Billing and Plans",
+          "message": "Product area should reference the correct product/module"
+        },
+        {
+          "check_name": "kb_match_as_expected",
+          "passed": true,
+          "expected": "kb_match.found=True",
+          "actual": "kb_match.found=True",
+          "message": "KB match found status should match expectation"
+        },
+        {
+          "check_name": "draft_response_substantive",
+          "passed": true,
+          "expected": ">50 chars",
+          "actual": "514 chars",
+          "message": "Draft response must be a substantive message"
+        },
+        {
+          "check_name": "urgency_reasoning_present",
+          "passed": true,
+          "expected": ">20 chars",
+          "actual": "308 chars",
+          "message": "Urgency reasoning must explain the classification"
+        },
+        {
+          "check_name": "prompt_version_present",
+          "passed": true,
+          "expected": "non-empty",
+          "actual": "v1.1",
+          "message": "Prompt version must be echoed in output for auditability"
+        }
+      ],
+      "llm_judge_score": 1.0,
+      "llm_judge_rationale": "The triage output accurately assesses the urgency as low, correctly categorizes the issue as a billing inquiry, and provides a professional and relevant draft response to the customer's question.",
+      "quality_score": 1.0,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 1.24
+    },
+    {
+      "test_id": "T1-TC4",
+      "task": 1,
+      "name": "AnalyticsHub dashboard timeout \u2014 performance issue",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "all_fields_present",
+          "passed": true,
+          "expected": "all required fields non-empty",
+          "actual": "present",
+          "message": "All TriageOutput fields must be populated"
+        },
+        {
+          "check_name": "urgency_correct",
+          "passed": false,
+          "expected": "P3",
+          "actual": "P2",
+          "message": "Urgency should be P3 for this ticket type"
+        },
+        {
+          "check_name": "category_correct",
+          "passed": true,
+          "expected": "Performance",
+          "actual": "Performance",
+          "message": "Category should be Performance"
+        },
+        {
+          "check_name": "product_area_relevant",
+          "passed": true,
+          "expected": "one of ['analyticshub', 'analytics', 'dashboard']",
+          "actual": "AnalyticsHub / Dashboards",
+          "message": "Product area should reference the correct product/module"
+        },
+        {
+          "check_name": "kb_match_as_expected",
+          "passed": true,
+          "expected": "kb_match.found=True",
+          "actual": "kb_match.found=True",
+          "message": "KB match found status should match expectation"
+        },
+        {
+          "check_name": "draft_response_substantive",
+          "passed": true,
+          "expected": ">50 chars",
+          "actual": "450 chars",
+          "message": "Draft response must be a substantive message"
+        },
+        {
+          "check_name": "urgency_reasoning_present",
+          "passed": true,
+          "expected": ">20 chars",
+          "actual": "345 chars",
+          "message": "Urgency reasoning must explain the classification"
+        },
+        {
+          "check_name": "prompt_version_present",
+          "passed": true,
+          "expected": "non-empty",
+          "actual": "v1.1",
+          "message": "Prompt version must be echoed in output for auditability"
+        }
+      ],
+      "llm_judge_score": 0.9,
+      "llm_judge_rationale": "The triage output accurately assesses the urgency, categorizes the issue correctly, and provides a professional draft response, but minor improvements could be made for perfection, such as fully detailing the workaround in the draft response.",
+      "quality_score": 0.882,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 1.23
+    },
+    {
+      "test_id": "T1-TC5",
+      "task": 1,
+      "name": "Feature request \u2014 bulk export in WorkflowEngine",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "all_fields_present",
+          "passed": true,
+          "expected": "all required fields non-empty",
+          "actual": "present",
+          "message": "All TriageOutput fields must be populated"
+        },
+        {
+          "check_name": "urgency_correct",
+          "passed": true,
+          "expected": "P4",
+          "actual": "P4",
+          "message": "Urgency should be P4 for this ticket type"
+        },
+        {
+          "check_name": "category_correct",
+          "passed": true,
+          "expected": "Feature Request",
+          "actual": "Feature Request",
+          "message": "Category should be Feature Request"
+        },
+        {
+          "check_name": "product_area_relevant",
+          "passed": true,
+          "expected": "one of ['workflowengine', 'workflow']",
+          "actual": "WorkflowEngine / Core Modules",
+          "message": "Product area should reference the correct product/module"
+        },
+        {
+          "check_name": "draft_response_substantive",
+          "passed": true,
+          "expected": ">50 chars",
+          "actual": "426 chars",
+          "message": "Draft response must be a substantive message"
+        },
+        {
+          "check_name": "urgency_reasoning_present",
+          "passed": true,
+          "expected": ">20 chars",
+          "actual": "298 chars",
+          "message": "Urgency reasoning must explain the classification"
+        },
+        {
+          "check_name": "prompt_version_present",
+          "passed": true,
+          "expected": "non-empty",
+          "actual": "v1.1",
+          "message": "Prompt version must be echoed in output for auditability"
+        }
+      ],
+      "llm_judge_score": 0.9,
+      "llm_judge_rationale": "The triage output accurately categorizes the ticket as a feature request with appropriate urgency and product area, and the draft response is professional, but the responder is incorrectly assigned to Tier-1 Support, which typically handles more urgent issues.",
+      "quality_score": 0.97,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 1.29
+    },
+    {
+      "test_id": "T1-TC6-ADV",
+      "task": 1,
+      "name": "ADVERSARIAL \u2014 Vague ticket with no product or error code",
+      "adversarial": true,
+      "checks": [
+        {
+          "check_name": "all_fields_present",
+          "passed": true,
+          "expected": "all required fields non-empty",
+          "actual": "present",
+          "message": "All TriageOutput fields must be populated"
+        },
+        {
+          "check_name": "draft_response_substantive",
+          "passed": true,
+          "expected": ">50 chars",
+          "actual": "639 chars",
+          "message": "Draft response must be a substantive message"
+        },
+        {
+          "check_name": "urgency_reasoning_present",
+          "passed": true,
+          "expected": ">20 chars",
+          "actual": "376 chars",
+          "message": "Urgency reasoning must explain the classification"
+        },
+        {
+          "check_name": "prompt_version_present",
+          "passed": true,
+          "expected": "non-empty",
+          "actual": "v1.1",
+          "message": "Prompt version must be echoed in output for auditability"
+        }
+      ],
+      "llm_judge_score": 0.8,
+      "llm_judge_rationale": "The triage output is mostly accurate and professional, but the product area is uncertain and the draft response could be more specific about next steps or troubleshooting questions.",
+      "quality_score": 0.94,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 1.54
+    },
+    {
+      "test_id": "T2-TC1",
+      "task": 2,
+      "name": "At-Risk account \u2014 Omni Consumer Products ($500k ARR)",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "metadata_complete",
+          "passed": true,
+          "expected": "account_id, company, tam, plan_tier all present",
+          "actual": "account_id=ACC-3336, company=Omni Consumer Products",
+          "message": "AccountBrief must include complete account metadata"
+        },
+        {
+          "check_name": "executive_summary_length",
+          "passed": true,
+          "expected": ">=3 sentences",
+          "actual": "5 sentences",
+          "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
+        },
+        {
+          "check_name": "executive_summary_substantive",
+          "passed": true,
+          "expected": ">100 chars",
+          "actual": "598 chars",
+          "message": "Executive summary must contain meaningful content"
+        },
+        {
+          "check_name": "risks_present_for_at_risk_account",
+          "passed": true,
+          "expected": "at least 1 risk",
+          "actual": "2 risks",
+          "message": "At-risk accounts should have flagged risks"
+        },
+        {
+          "check_name": "risk_quotes_present",
+          "passed": true,
+          "expected": "all risks have ticket_quote >10 chars",
+          "actual": "2/2 have quotes",
+          "message": "Every risk must include a direct ticket quote"
+        },
+        {
+          "check_name": "talking_points_count",
+          "passed": true,
+          "expected": ">=3 talking points",
+          "actual": "3 talking points",
+          "message": "Brief must include actionable talking points for the TAM"
+        },
+        {
+          "check_name": "health_status_matches_data",
+          "passed": true,
+          "expected": "At Risk",
+          "actual": "At Risk",
+          "message": "Health status in brief must match accounts.json record"
+        },
+        {
+          "check_name": "generated_at_valid_timestamp",
+          "passed": true,
+          "expected": "valid ISO-8601 datetime",
+          "actual": "2026-08-09T11:34:33.324873+00:00",
+          "message": "generated_at must be a valid UTC ISO-8601 timestamp"
+        },
+        {
+          "check_name": "output_is_deterministic",
+          "passed": false,
+          "expected": "same executive_summary on second run",
+          "actual": "different output",
+          "message": "temperature=0.0 must produce identical output for the same input"
+        }
+      ],
+      "llm_judge_score": 0.9,
+      "llm_judge_rationale": "The brief is accurate, actionable, and professional, with well-evidenced risks, but lacks direct quotes from the tickets to support the risk statements.",
+      "quality_score": 0.892,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 1.73
+    },
+    {
+      "test_id": "T2-TC2",
+      "task": 2,
+      "name": "Healthy account \u2014 Wayne Enterprises",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "metadata_complete",
+          "passed": true,
+          "expected": "account_id, company, tam, plan_tier all present",
+          "actual": "account_id=ACC-9010, company=Wayne Enterprises",
+          "message": "AccountBrief must include complete account metadata"
+        },
+        {
+          "check_name": "executive_summary_length",
+          "passed": true,
+          "expected": ">=3 sentences",
+          "actual": "5 sentences",
+          "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
+        },
+        {
+          "check_name": "executive_summary_substantive",
+          "passed": true,
+          "expected": ">100 chars",
+          "actual": "507 chars",
+          "message": "Executive summary must contain meaningful content"
+        },
+        {
+          "check_name": "talking_points_count",
+          "passed": true,
+          "expected": ">=3 talking points",
+          "actual": "3 talking points",
+          "message": "Brief must include actionable talking points for the TAM"
+        },
+        {
+          "check_name": "health_status_matches_data",
+          "passed": true,
+          "expected": "Healthy",
+          "actual": "Healthy",
+          "message": "Health status in brief must match accounts.json record"
+        },
+        {
+          "check_name": "generated_at_valid_timestamp",
+          "passed": true,
+          "expected": "valid ISO-8601 datetime",
+          "actual": "2026-08-09T11:34:40.905308+00:00",
+          "message": "generated_at must be a valid UTC ISO-8601 timestamp"
+        },
+        {
+          "check_name": "output_is_deterministic",
+          "passed": true,
+          "expected": "same executive_summary on second run",
+          "actual": "match",
+          "message": "temperature=0.0 must produce identical output for the same input"
+        }
+      ],
+      "llm_judge_score": 0.8,
+      "llm_judge_rationale": "The brief is accurate, actionable, and professional, but lacks specific risk evidence and ticket quotes to support the healthy account status and low renewal risk assessment.",
+      "quality_score": 0.94,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 4.43
+    },
+    {
+      "test_id": "T2-TC3",
+      "task": 2,
+      "name": "Churning account \u2014 Pinnacle Systems",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "metadata_complete",
+          "passed": true,
+          "expected": "account_id, company, tam, plan_tier all present",
+          "actual": "account_id=ACC-2944, company=Pinnacle Systems",
+          "message": "AccountBrief must include complete account metadata"
+        },
+        {
+          "check_name": "executive_summary_length",
+          "passed": true,
+          "expected": ">=3 sentences",
+          "actual": "4 sentences",
+          "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
+        },
+        {
+          "check_name": "executive_summary_substantive",
+          "passed": true,
+          "expected": ">100 chars",
+          "actual": "559 chars",
+          "message": "Executive summary must contain meaningful content"
+        },
+        {
+          "check_name": "risks_present_for_at_risk_account",
+          "passed": true,
+          "expected": "at least 1 risk",
+          "actual": "1 risks",
+          "message": "At-risk accounts should have flagged risks"
+        },
+        {
+          "check_name": "risk_quotes_present",
+          "passed": true,
+          "expected": "all risks have ticket_quote >10 chars",
+          "actual": "1/1 have quotes",
+          "message": "Every risk must include a direct ticket quote"
+        },
+        {
+          "check_name": "talking_points_count",
+          "passed": true,
+          "expected": ">=3 talking points",
+          "actual": "3 talking points",
+          "message": "Brief must include actionable talking points for the TAM"
+        },
+        {
+          "check_name": "health_status_matches_data",
+          "passed": true,
+          "expected": "Churning",
+          "actual": "Churning",
+          "message": "Health status in brief must match accounts.json record"
+        },
+        {
+          "check_name": "generated_at_valid_timestamp",
+          "passed": true,
+          "expected": "valid ISO-8601 datetime",
+          "actual": "2026-08-09T11:34:51.696918+00:00",
+          "message": "generated_at must be a valid UTC ISO-8601 timestamp"
+        },
+        {
+          "check_name": "output_is_deterministic",
+          "passed": false,
+          "expected": "same executive_summary on second run",
+          "actual": "different output",
+          "message": "temperature=0.0 must produce identical output for the same input"
+        }
+      ],
+      "llm_judge_score": 0.8,
+      "llm_judge_rationale": "The brief is accurate, actionable, and professional, but it lacks specific ticket quotes to evidence the risks, which would further strengthen the analysis and recommendations.",
+      "quality_score": 0.862,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 5.79
+    },
+    {
+      "test_id": "T2-TC4",
+      "task": 2,
+      "name": "New account \u2014 Solaris Data (recently onboarded)",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "metadata_complete",
+          "passed": true,
+          "expected": "account_id, company, tam, plan_tier all present",
+          "actual": "account_id=ACC-7893, company=Solaris Data",
+          "message": "AccountBrief must include complete account metadata"
+        },
+        {
+          "check_name": "executive_summary_length",
+          "passed": true,
+          "expected": ">=2 sentences",
+          "actual": "4 sentences",
+          "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
+        },
+        {
+          "check_name": "executive_summary_substantive",
+          "passed": true,
+          "expected": ">100 chars",
+          "actual": "526 chars",
+          "message": "Executive summary must contain meaningful content"
+        },
+        {
+          "check_name": "talking_points_count",
+          "passed": true,
+          "expected": ">=2 talking points",
+          "actual": "3 talking points",
+          "message": "Brief must include actionable talking points for the TAM"
+        },
+        {
+          "check_name": "health_status_matches_data",
+          "passed": true,
+          "expected": "New",
+          "actual": "New",
+          "message": "Health status in brief must match accounts.json record"
+        },
+        {
+          "check_name": "generated_at_valid_timestamp",
+          "passed": true,
+          "expected": "valid ISO-8601 datetime",
+          "actual": "2026-08-09T11:35:02.216551+00:00",
+          "message": "generated_at must be a valid UTC ISO-8601 timestamp"
+        },
+        {
+          "check_name": "output_is_deterministic",
+          "passed": false,
+          "expected": "same executive_summary on second run",
+          "actual": "different output",
+          "message": "temperature=0.0 must produce identical output for the same input"
+        }
+      ],
+      "llm_judge_score": 0.8,
+      "llm_judge_rationale": "The brief is accurate, actionable, and professional, but lacks specific details on the open tickets and does not include any quoted text from the tickets to support the risks, which are also not flagged.",
+      "quality_score": 0.84,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 4.36
+    },
+    {
+      "test_id": "T2-TC5",
+      "task": 2,
+      "name": "Enterprise At Risk \u2014 Vertex Solutions (multiple escalation signals)",
+      "adversarial": false,
+      "checks": [
+        {
+          "check_name": "metadata_complete",
+          "passed": true,
+          "expected": "account_id, company, tam, plan_tier all present",
+          "actual": "account_id=ACC-8113, company=Vertex Solutions",
+          "message": "AccountBrief must include complete account metadata"
+        },
+        {
+          "check_name": "executive_summary_length",
+          "passed": true,
+          "expected": ">=3 sentences",
+          "actual": "4 sentences",
+          "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
+        },
+        {
+          "check_name": "executive_summary_substantive",
+          "passed": true,
+          "expected": ">100 chars",
+          "actual": "581 chars",
+          "message": "Executive summary must contain meaningful content"
+        },
+        {
+          "check_name": "risks_present_for_at_risk_account",
+          "passed": true,
+          "expected": "at least 1 risk",
+          "actual": "2 risks",
+          "message": "At-risk accounts should have flagged risks"
+        },
+        {
+          "check_name": "risk_quotes_present",
+          "passed": true,
+          "expected": "all risks have ticket_quote >10 chars",
+          "actual": "2/2 have quotes",
+          "message": "Every risk must include a direct ticket quote"
+        },
+        {
+          "check_name": "talking_points_count",
+          "passed": true,
+          "expected": ">=3 talking points",
+          "actual": "3 talking points",
+          "message": "Brief must include actionable talking points for the TAM"
+        },
+        {
+          "check_name": "health_status_matches_data",
+          "passed": true,
+          "expected": "At Risk",
+          "actual": "At Risk",
+          "message": "Health status in brief must match accounts.json record"
+        },
+        {
+          "check_name": "generated_at_valid_timestamp",
+          "passed": true,
+          "expected": "valid ISO-8601 datetime",
+          "actual": "2026-08-09T11:35:12.454662+00:00",
+          "message": "generated_at must be a valid UTC ISO-8601 timestamp"
+        },
+        {
+          "check_name": "output_is_deterministic",
+          "passed": false,
+          "expected": "same executive_summary on second run",
+          "actual": "different output",
+          "message": "temperature=0.0 must produce identical output for the same input"
+        }
+      ],
+      "llm_judge_score": 0.8,
+      "llm_judge_rationale": "The brief is accurate, actionable, and professional, but it lacks specific ticket quotes to evidence the negative sentiment in support interactions, which would further strengthen the risk assessment.",
+      "quality_score": 0.862,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 5.45
+    },
+    {
+      "test_id": "T2-TC6-ADV",
+      "task": 2,
+      "name": "ADVERSARIAL \u2014 Non-existent account ID",
+      "adversarial": true,
+      "checks": [
+        {
+          "check_name": "graceful_error_for_invalid_id",
+          "passed": true,
+          "expected": "ValueError raised",
+          "actual": "Account 'ACC-DOES-NOT-EXIST-99999' not found in accounts.json and has no recent tickets. Please verify the account ID.",
+          "message": "Invalid account ID should raise ValueError gracefully"
+        }
+      ],
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 1.0,
+      "passed": true,
+      "error": null,
+      "latency_seconds": 0.01
+    }
+  ]
+}
