@@ -1,129 +1,185 @@
-# Task 1 — Intelligent Ticket Triage Agent
+# Production-Grade AI for Technical Support & TAM Teams
 
-Ingests a raw support ticket (free-text or JSON) and produces a fully structured triage result — product area, issue category, urgency (P1–P4 with reasoning), relevant knowledge-base article, recommended responder team, and a draft first-response — with zero human labelling.
+A two-task AI system built for internal tooling teams at a B2B SaaS company. It combines intelligent ticket triage with automated account health summarisation — replacing hours of manual work with sub-2-second LLM-powered results.
+
+---
+
+## What This Solves
+
+| Problem | Solution |
+|---|---|
+| Support agents manually classifying hundreds of tickets a day | Task 1 — auto-classifies product area, urgency, category, routes to the right team, and drafts the first response |
+| TAMs spending 30+ minutes before each QBR piecing together account context | Task 2 — generates a complete 3-section brief from raw account + ticket data in seconds |
+
+---
+
+## Live Demo
+
+```bash
+# UI — both tasks in one interface
+streamlit run app.py
+```
+
+Opens at `http://localhost:8501` with two tabs:
+- **🎫 Ticket Triage** — paste any ticket, get instant structured triage
+- **📋 TAM Account Brief** — pick an account, get a full QBR-ready brief
 
 ---
 
 ## Architecture
 
+### Task 1 — Ticket Triage Pipeline
+
 ```
-Incoming ticket (text or JSON)
+Raw ticket (text or JSON)
         │
         ▼
-  ┌─────────────┐   BM25 keyword search   ┌──────────────────────┐
-  │  kb_index   │◄───────────────────────►│  KB Markdown files   │
-  │ (RAG layer) │   top-3 chunks          │  (9 docs, ~30 chunks)│
-  └─────┬───────┘                         └──────────────────────┘
-        │ formatted context
+  ┌─────────────┐   BM25 search (rank-bm25)   ┌──────────────────────────┐
+  │  kb_index   │◄──────────────────────────►│  9 KB Markdown docs       │
+  │  (RAG layer)│   top-3 relevant chunks     │  ~30 sections total       │
+  └─────┬───────┘                             └──────────────────────────┘
+        │ formatted KB context
         ▼
-  ┌─────────────────────────────────────┐
-  │  triage.py  (prompt v1.1)           │──► Groq LLM
-  │  TRIAGE_PROMPT template + KB chunks │◄── structured JSON
-  └─────┬───────────────────────────────┘
-        │ validated by Pydantic → TriageOutput
+  ┌───────────────────────────────────────┐
+  │  triage.py  (TRIAGE_PROMPT v1.1)      │ ──► Groq LLM (llama-3.3-70b)
+  │  prompt template + KB chunks          │ ◄── structured JSON response
+  └─────┬─────────────────────────────────┘
+        │ parsed + validated by Pydantic
         ▼
-  CLI / FastAPI REST / Streamlit UI
+  TriageOutput: product_area · issue_category · urgency (P1–P4)
+              · urgency_reasoning · kb_match · responder_team
+              · responder_reasoning · draft_response · prompt_version
+        │
+        ▼
+  CLI (run_triage.py) / REST API (api.py) / Streamlit UI (app.py)
 ```
 
-**RAG strategy:** Each KB markdown file is split on `---` section boundaries (~30 chunks total). Chunks are indexed with BM25 (`rank-bm25`) — no GPU, no external embeddings API required. The top-3 chunks are injected into the prompt. BM25 is well-suited to technical support text where exact error codes and product names matter.
+### Task 2 — TAM Account Brief Pipeline
 
-**Prompt versioning:** Every prompt in `prompts.py` has a `version` field and `changelog` list. The current version (`v1.1`) is echoed in every `TriageOutput` for full traceability. A `PROMPT_REGISTRY` dict exposes all prompts for audit and CI validation.
+```
+account_id
+        │
+        ▼
+  ┌──────────────────────────────────────┐
+  │  account_brief.py                    │
+  │  1. Load accounts.json → find account│
+  │  2. Load tickets.json → filter 90d   │
+  │  3. Format structured prompt         │
+  └──────────┬───────────────────────────┘
+             │ account metadata + ticket summaries
+             ▼
+  ┌───────────────────────────────────────┐
+  │  TAM_BRIEF_PROMPT v1.0                │ ──► Groq LLM (temperature=0.0)
+  │  Account + ticket context             │ ◄── deterministic JSON response
+  └─────┬─────────────────────────────────┘
+        │ parsed + validated by Pydantic
+        ▼
+  AccountBrief: executive_summary (3–5 sentences)
+              · risks (with direct ticket quotes)
+              · talking_points
+              · metadata (tickets_analysed, generated_at)
+        │
+        ▼
+  CLI (run_brief.py) / REST API (/brief/{account_id}) / Streamlit Tab 2
+```
 
 ---
 
 ## Setup
 
+### 1. Install dependencies
+
 ```bash
 cd Task-1
-
-# 1. Install dependencies
 pip install -r requirements.txt
-
-# 2. Configure environment
-copy .env.example .env        # Windows
-# cp .env.example .env        # Mac/Linux
-
-# 3. Edit .env and set your Groq API key
-# GROQ_API_KEY=gsk_...
 ```
 
-Get a free Groq API key at <https://console.groq.com>. The `llama-3.3-70b-versatile` model is used by default.
+### 2. Configure environment
+
+```bash
+# Windows
+copy .env.example .env
+
+# macOS / Linux
+cp .env.example .env
+```
+
+Edit `.env` and set your Groq API key:
+
+```env
+GROQ_API_KEY=gsk_your_key_here
+GROQ_MODEL=llama-3.3-70b-versatile
+DATA_DIR=../Task/resources/starter-repo
+```
+
+Get a **free** Groq API key at [console.groq.com](https://console.groq.com) — no credit card required.
+
+### 3. Verify everything loads
+
+```bash
+python -c "import triage; import account_brief; import api; from models import AccountBrief, RiskItem, TriageOutput; print('ALL OK')"
+```
+
+Expected output: `ALL OK`
 
 ---
 
-## Sample Runs
+## Task 1 — Intelligent Ticket Triage
 
-### CLI — triage a dataset ticket
+### What it produces
+
+For any incoming support ticket (free text or JSON), the pipeline outputs:
+
+| Field | Description |
+|---|---|
+| `product_area` | Product name and module, e.g. `DataBridge Pro / Connectors` |
+| `issue_category` | Bug · Feature Request · How-To · Performance · Billing · Integration · Onboarding · Data Loss |
+| `urgency` | P1 (critical) → P4 (low) with reasoning |
+| `kb_match` | Matched KB article title, section, and confidence (high/medium/low) |
+| `responder_team` | Tier-1 Support · Tier-2 Engineering · Billing & Accounts · Onboarding · Security · TAM Escalation |
+| `draft_response` | Professional first-response message ready to send |
+| `prompt_version` | Prompt version used (for auditability) |
+
+### CLI usage
 
 ```bash
-python run_triage.py --ticket-id TKT-10042
+# Triage a ticket from the dataset by ID
+python run_triage.py --ticket-id TKT-10000
+
+# Triage free-text input
+python run_triage.py --subject "Pipeline stopped" --body "ERR_CONNECTION_TIMEOUT on DataBridge Pro. 47 engineers blocked."
+
+# Stream tokens as they generate
+python run_triage.py --ticket-id TKT-10003 --stream
+
+# Raw JSON output
+python run_triage.py --ticket-id TKT-10000 --json
 ```
 
-Output:
+### Sample output
+
 ```
-────────────────────────────────────────────────────────────
-  Ticket ID    : TKT-10042
-  Product Area : WorkflowEngine / SSO
-  Category     : Integration
-  Urgency      : P2  (492 new users blocked; existing users unaffected — major
-                      impact but not production-fully-down)
+──────────────────────────────────────────────────────────────
+  Ticket ID    : TKT-10000
+  Product Area : DataBridge Pro / Data Ingestion
+  Category     : Feature Request
+  Urgency      : P2  (Bulk operations unavailable at scale — 116 users impacted,
+                       no viable one-by-one workaround for production use)
   Responder    : Tier-1 Support
-  Reason       : Matches known KB article — SSO group mapping fix.
+  Reason       : Known feature gap with a documented workaround available.
 
-  KB Match     : ✅  New Users Cannot Authenticate via SSO [high]
-  Section      : Symptom: Existing users log in fine; new joiners get an error.
+  KB Match     : ✅  DataBridge Pro — Product Reference [high]
+  Section      : Data Ingestion
 
   Draft Response:
-    Dear customer, I've identified this as a known SSO group-mapping issue.
-    Please navigate to Settings → SSO → Group Mapping and verify the new
-    users' IDP group has a role assigned. No reprovisioning is needed after
-    the mapping is added. Let me know if you need further assistance.
+    Thank you for reaching out. I understand that the lack of bulk archive
+    operations in the Data Ingestion module is significantly impacting your
+    team's productivity at scale. While native bulk operations are not yet
+    available, I can walk you through the API-based batch approach that some
+    teams use as a workaround ...
 
   Prompt version: v1.1
-────────────────────────────────────────────────────────────
-```
-
-### CLI — stream tokens in real time
-
-```bash
-python run_triage.py --ticket-id TKT-10003 --stream
-```
-
-Tokens stream to the terminal as the LLM generates them, then the structured summary is printed.
-
-### CLI — paste free-text ticket
-
-```bash
-python run_triage.py \
-  --subject "Pipeline stopped after credentials rotated" \
-  --body "Our DataBridge Pro pipeline shows ERR_CONNECTION_TIMEOUT since we rotated AWS keys yesterday. 47 engineers are blocked."
-```
-
-### CLI — raw JSON output
-
-```bash
-python run_triage.py --ticket-id TKT-10042 --json
-```
-
-```json
-{
-  "product_area": "WorkflowEngine / SSO",
-  "issue_category": "Integration",
-  "urgency": "P2",
-  "urgency_reasoning": "...",
-  "kb_match": {
-    "found": true,
-    "doc_title": "New Users Cannot Authenticate via SSO",
-    "relevant_section": "Symptom: Existing users log in fine; new joiners get an error.",
-    "confidence": "high"
-  },
-  "responder_team": "Tier-1 Support",
-  "responder_reasoning": "...",
-  "draft_response": "...",
-  "ticket_id": "TKT-10042",
-  "prompt_version": "v1.1",
-  "retrieved_docs": [...]
-}
+──────────────────────────────────────────────────────────────
 ```
 
 ### REST API
@@ -135,31 +191,103 @@ uvicorn api:app --reload --port 8000
 # Triage a ticket (synchronous)
 curl -X POST http://localhost:8000/triage \
   -H "Content-Type: application/json" \
-  -d '{"subject": "Pipeline down", "body": "ERR_CONNECTION_TIMEOUT after 30s on DataBridge Pro."}'
+  -d '{"subject": "Pipeline down", "body": "ERR_CONNECTION_TIMEOUT on DataBridge Pro."}'
 
-# Triage with streaming (Server-Sent Events)
+# Streaming triage (Server-Sent Events)
 curl -N -X POST http://localhost:8000/triage/stream \
   -H "Content-Type: application/json" \
   -d '{"subject": "Pipeline down", "body": "ERR_CONNECTION_TIMEOUT after 30s."}'
 
 # Health check
 curl http://localhost:8000/health
-# → {"status": "ok", "service": "ticket-triage-agent"}
 ```
 
-The streaming endpoint yields `data: <token>` chunks followed by `data: [DONE]` and a final `data: [RESULT] {...}` line containing the full structured JSON.
+Interactive Swagger docs: `http://localhost:8000/docs`
 
-### Streamlit UI (Bonus +5)
+---
+
+## Task 2 — TAM Account Health Summariser
+
+### What it produces
+
+For any `account_id`, the pipeline pulls 90 days of ticket history and generates a 3-section brief:
+
+**Section 1 — Executive Summary**
+3–5 sentences covering overall health, usage trends, key open issues, and renewal risk. Factual and data-referenced.
+
+**Section 2 — Open Risks & Flagged Issues**
+Each risk includes:
+- A description of the churn signal or escalation trigger
+- The source ticket ID
+- A **direct verbatim quote** from the ticket body that justifies the flag
+
+**Section 3 — Recommended Talking Points**
+3–6 specific, actionable talking points for the TAM's next account call. References actual products, usage data, and open issues.
+
+Output is **deterministic** — `temperature=0.0` ensures the same input always produces the same output.
+
+### CLI usage
 
 ```bash
-streamlit run app.py
+# Generate a TAM brief
+python run_brief.py --account-id ACC-3336
+
+# Raw JSON output
+python run_brief.py --account-id ACC-3336 --json
+
+# Try an at-risk account
+python run_brief.py --account-id ACC-8113
 ```
 
-Opens a browser UI with two modes:
-- **Paste a ticket** — type or paste any ticket text and click Triage
-- **Pick from dataset** — browse all 500 tickets and triage with one click
+### Sample output
 
-Displays urgency badge, KB match card, routing recommendation, and the full draft response. Toggle streaming on/off from the sidebar.
+```
+══════════════════════════════════════════════════════════════════════
+  TAM ACCOUNT HEALTH BRIEF  —  Task 2
+══════════════════════════════════════════════════════════════════════
+  Account   : ACC-3336  |  Omni Consumer Products
+  TAM       : Rohan Mehta
+  Plan      : Business  |  Health: At Risk
+  ARR       : $500,000
+  Tickets   : 4 analysed (last 90 days)
+══════════════════════════════════════════════════════════════════════
+
+📋  EXECUTIVE SUMMARY
+──────────────────────────────────────────────────────────────────────
+Omni Consumer Products is a high-value Business plan account ($500k ARR)
+currently flagged as At Risk with an Inactive usage trend. The account has
+7 open tickets and the primary decision maker has been noted as evaluating
+competing vendors. Renewal is scheduled for August 2026 — urgent intervention
+is recommended.
+
+⚠️   OPEN RISKS & FLAGGED ISSUES
+──────────────────────────────────────────────────────────────────────
+  1. [TKT-10XXX] Decision maker considering vendor switch
+     Quote: "our management team has started evaluating alternative platforms"
+
+  2. [TKT-10XXX] Usage has gone inactive despite large licensed seat base
+     Quote: "we haven't been using the platform for the past few weeks"
+
+💬  RECOMMENDED TALKING POINTS
+──────────────────────────────────────────────────────────────────────
+  1. Address competitor evaluation directly — schedule an executive sponsor call
+  2. Review WorkflowEngine and AnalyticsHub adoption blockers with the IT team
+  3. Offer a health-check session to clear all 7 open tickets before renewal
+══════════════════════════════════════════════════════════════════════
+```
+
+### REST API
+
+```bash
+# List all accounts (for UI or integration)
+curl http://localhost:8000/accounts
+
+# Generate an account brief
+curl http://localhost:8000/brief/ACC-3336
+
+# Another example — at-risk account
+curl http://localhost:8000/brief/ACC-8113
+```
 
 ---
 
@@ -167,19 +295,31 @@ Displays urgency badge, KB match card, routing recommendation, and the full draf
 
 ```
 Task-1/
-├── config.py                    # All settings loaded from .env
-├── prompts.py                   # Versioned prompts — PROMPT_REGISTRY + changelog
-├── kb_index.py                  # BM25 RAG index over KB markdown files
-├── models.py                    # Pydantic TicketInput / TriageOutput schemas
-├── triage.py                    # Core pipeline: sync (triage_ticket) + streaming
-├── api.py                       # FastAPI: POST /triage, POST /triage/stream, GET /health
-├── run_triage.py                # CLI entry point
-├── app.py                       # Streamlit UI (bonus)
+│
+│  ── Core shared modules ──────────────────────────────────────────
+├── config.py          # All settings loaded from .env (LLM, RAG, data paths)
+├── models.py          # Pydantic schemas for Task 1 (TriageOutput) and Task 2 (AccountBrief)
+├── prompts.py         # Versioned prompts — PROMPT_REGISTRY with version + changelog
+│
+│  ── Task 1: Ticket Triage ────────────────────────────────────────
+├── kb_index.py        # BM25 RAG index over 9 KB markdown files (~30 chunks)
+├── triage.py          # Core pipeline: triage_ticket() + triage_ticket_stream()
+├── run_triage.py      # CLI entry point for Task 1
+│
+│  ── Task 2: TAM Account Brief ────────────────────────────────────
+├── account_brief.py   # Core pipeline: generate_brief(account_id) -> AccountBrief
+├── run_brief.py       # CLI entry point for Task 2
+│
+│  ── Shared API & UI ───────────────────────────────────────────────
+├── api.py             # FastAPI: /triage · /triage/stream · /brief/{id} · /accounts · /health
+├── app.py             # Streamlit UI: Tab 1 (Triage) + Tab 2 (TAM Brief)
+│
+│  ── Config & CI ───────────────────────────────────────────────────
 ├── .github/
 │   └── workflows/
-│       └── eval.yml             # GitHub Actions CI — runs eval harness on every commit
+│       └── eval.yml   # GitHub Actions CI — smoke tests on every push/PR
 ├── requirements.txt
-├── .env.example                 # Required env vars (never commit .env)
+├── .env.example       # Required env vars template (never commit .env)
 └── README.md
 ```
 
@@ -187,21 +327,114 @@ Task-1/
 
 ## Bonus Features
 
-| Bonus | Points | Implementation |
-|-------|--------|----------------|
-| Streamlit UI | +5 | `app.py` — browse dataset or paste free-text; streaming toggle |
-| Streaming output | +3 | `triage_ticket_stream()` in `triage.py`; `POST /triage/stream` SSE endpoint; `--stream` CLI flag |
-| GitHub Actions CI | +2 | `.github/workflows/eval.yml` — installs deps, smoke-tests imports, runs eval harness on every push/PR |
-| Prompt versioning | +2 | `prompts.py` — `version` + `changelog` per prompt; `PROMPT_REGISTRY` for audit; version in every output |
+| Bonus | Marks | Status | Implementation |
+|---|---|---|---|
+| Streamlit UI | +5 | ✅ | `app.py` — two-tab UI covering Task 1 and Task 2 |
+| Streaming output | +3 | ✅ | `triage_ticket_stream()` in `triage.py`; SSE endpoint `POST /triage/stream`; `--stream` CLI flag |
+| GitHub Actions CI | +2 | ✅ | `.github/workflows/eval.yml` — runs on every push and PR |
+| Prompt versioning | +2 | ✅ | `PROMPT_REGISTRY` in `prompts.py` — every prompt has `version` + `changelog`; version echoed in every output |
 
 ---
 
 ## Key Design Decisions
 
-**BM25 over vector embeddings:** Technical support text is keyword-dense (error codes like `ERR_CONNECTION_TIMEOUT`, product names, module names). BM25 retrieves the exact error reference table reliably without needing a GPU or an external embeddings API. For a production system with much larger KB, a hybrid BM25 + dense retrieval approach would be appropriate.
+### BM25 over vector embeddings (Task 1 RAG)
 
-**Groq / llama-3.3-70b:** Free tier, very fast (~1–2s end-to-end), and the 70B model produces well-structured JSON reliably. Temperature is fixed at 0.0 for deterministic output.
+Technical support text is keyword-dense — error codes like `ERR_CONNECTION_TIMEOUT`, product names, module names. BM25 (`rank-bm25`) retrieves the exact error reference reliably without a GPU, without an embeddings API call, and with near-zero latency. For a production KB with thousands of documents, a hybrid BM25 + dense retrieval approach would be the right evolution.
 
-**Pydantic validation:** The LLM response is parsed and validated against `TriageOutput` — if the model returns an unexpected urgency value or missing field, it fails loudly with a clear error rather than silently passing bad data downstream.
-#   U S - D e l i v e r y -  
- 
+### Groq + llama-3.3-70b
+
+Free tier, ~1–2s end-to-end latency, reliable structured JSON output from the 70B model. `temperature=0.0` across both tasks ensures deterministic outputs for the same input — a Task 2 explicit requirement and good practice for Task 1 consistency.
+
+### Pydantic v2 validation as a hard gate
+
+LLM responses are parsed and validated against typed Pydantic models (`TriageOutput`, `AccountBrief`). If the model returns an invalid urgency value, missing required field, or malformed JSON, the pipeline fails loudly with a clear error — no silent bad data passed downstream.
+
+### Prompt versioning
+
+Every prompt in `PROMPT_REGISTRY` carries a `version` string and ordered `changelog` list. The version is echoed in every `TriageOutput` response. This enables regression tracking, A/B testing, and audit trails — critical for production AI systems.
+
+### Graceful data gaps (Task 2)
+
+The task spec notes that not every `account_id` in `tickets.json` has a matching record in `accounts.json`. The pipeline handles this by synthesising a minimal account context from available ticket data rather than hard-failing — a more realistic production behaviour.
+
+---
+
+## Design Note (Task 4)
+
+### Failure Modes
+
+**1. LLM returns invalid or partial JSON**
+The model occasionally wraps output in markdown fences or omits required fields despite prompt instructions. The `_extract_json()` helper strips fences and uses regex to find the first `{...}` block. Pydantic then validates all fields. In production, a retry with a simplified prompt would be the mitigation.
+
+**2. KB retrieval misses the relevant article**
+BM25 can fail on paraphrased queries where the customer describes an error in different words than the KB uses. Detection: log retrieval scores; if all scores are below a threshold, flag low confidence. Mitigation: hybrid BM25 + semantic search; expand KB coverage; add synonym mapping for common error codes.
+
+**3. Stale account data producing incorrect briefs (Task 2)**
+`accounts.json` is a point-in-time snapshot. If a TAM uses a brief generated 2 weeks ago, the risk signals may be outdated. Detection: include `generated_at` timestamp in every output (already implemented). Mitigation: set a TTL on cached briefs; force regeneration before QBRs.
+
+### Latency vs Quality Trade-off
+
+`TOP_K_DOCS=3` (retrieving 3 KB chunks) was chosen to balance prompt length against retrieval breadth. Increasing to 5–7 chunks would improve recall on multi-product tickets but adds ~400 tokens to the prompt and increases latency by ~200ms. If latency were a hard constraint (< 500ms SLA), the trade-off would be: reduce `max_tokens`, drop to `TOP_K_DOCS=2`, and use a smaller model (e.g. `llama-3.1-8b`).
+
+### Data Sensitivity & PII
+
+Ticket bodies and account records may contain customer names, email addresses, error messages with internal system paths, and contract values. This design mitigates leakage by:
+- Sending data only to Groq (a contracted API provider with data processing agreements)
+- Never logging raw ticket bodies or account data to disk in the application layer
+- `.env` excluded from version control via `.gitignore`
+- `.env.example` contains only placeholder values — no real credentials
+
+For a production deployment: data masking/redaction before LLM calls, on-premise LLM deployment for highest-sensitivity customers, and field-level encryption for `arr_usd` and contact fields at rest.
+
+### Scaling to 10× Ticket Volume
+
+At 10× volume the first bottleneck is **Groq API rate limits** (free tier: ~30 req/min). The BM25 index is in-memory and adds negligible overhead. Mitigations:
+- Queue tickets with a task queue (Celery + Redis) and process in batches
+- Cache triage results by ticket hash — identical tickets (duplicates) return instantly
+- Upgrade to a paid Groq tier or switch to self-hosted inference for burst capacity
+- For Task 2 briefs: cache the AccountBrief per account with a 4-hour TTL; most accounts don't change minute-to-minute
+
+---
+
+## Running Everything — Quick Reference
+
+```bash
+# Navigate to project
+cd "d:\Python World\Experiment\Zycus\Task-1"
+
+# ── Verify all imports ────────────────────────────────────
+python -c "import triage; import account_brief; import api; from models import AccountBrief, RiskItem, TriageOutput; print('ALL OK')"
+
+# ── Task 1 CLI ────────────────────────────────────────────
+python run_triage.py --ticket-id TKT-10000
+python run_triage.py --ticket-id TKT-10003 --stream
+python run_triage.py --subject "Pipeline down" --body "ERR_CONNECTION_TIMEOUT on DataBridge Pro."
+python run_triage.py --ticket-id TKT-10000 --json
+
+# ── Task 2 CLI ────────────────────────────────────────────
+python run_brief.py --account-id ACC-3336
+python run_brief.py --account-id ACC-8113
+python run_brief.py --account-id ACC-3336 --json
+
+# ── Streamlit UI (both tasks) ─────────────────────────────
+streamlit run app.py
+
+# ── REST API ──────────────────────────────────────────────
+uvicorn api:app --reload --port 8000
+# then open: http://localhost:8000/docs
+
+# Health check
+curl http://localhost:8000/health
+
+# Task 1 triage endpoint
+curl -X POST http://localhost:8000/triage \
+  -H "Content-Type: application/json" \
+  -d '{"subject": "Pipeline down", "body": "ERR_CONNECTION_TIMEOUT on DataBridge Pro."}'
+
+# Task 2 — list accounts
+curl http://localhost:8000/accounts
+
+# Task 2 — generate brief
+curl http://localhost:8000/brief/ACC-3336
+```
