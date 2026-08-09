@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-08-09T11:35:18.748834+00:00",
+  "generated_at": "2026-08-09T11:48:11.609777+00:00",
   "total_tests": 12,
   "passed": 12,
   "failed": 0,
-  "task1_score": 0.941,
-  "task2_score": 0.899,
-  "overall_score": 0.92,
+  "task1_score": 0.958,
+  "task2_score": 0.897,
+  "overall_score": 0.928,
   "results": [
     {
       "test_id": "T1-TC1",
@@ -52,14 +52,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "563 chars",
+          "actual": "449 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "388 chars",
+          "actual": "340 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -70,12 +70,12 @@
           "message": "Prompt version must be echoed in output for auditability"
         }
       ],
-      "llm_judge_score": 0.9,
-      "llm_judge_rationale": "The triage output accurately assesses the urgency and category of the issue, and the draft response is professional, but could be improved with more specific details about next steps or troubleshooting.",
-      "quality_score": 0.882,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 0.875,
       "passed": true,
       "error": null,
-      "latency_seconds": 2.07
+      "latency_seconds": 2.9
     },
     {
       "test_id": "T1-TC2",
@@ -122,14 +122,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "454 chars",
+          "actual": "549 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "336 chars",
+          "actual": "284 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -140,12 +140,12 @@
           "message": "Prompt version must be echoed in output for auditability"
         }
       ],
-      "llm_judge_score": 0.9,
-      "llm_judge_rationale": "The triage output is mostly accurate and professional, but the draft response could be more specific and detailed given the urgency and impact of the issue, and the responder could be Tier-2 or higher due to the complexity of the SSO integration issue.",
-      "quality_score": 0.97,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.38
+      "latency_seconds": 1.32
     },
     {
       "test_id": "T1-TC3",
@@ -192,14 +192,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "514 chars",
+          "actual": "446 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "308 chars",
+          "actual": "267 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -210,12 +210,12 @@
           "message": "Prompt version must be echoed in output for auditability"
         }
       ],
-      "llm_judge_score": 1.0,
-      "llm_judge_rationale": "The triage output accurately assesses the urgency as low, correctly categorizes the issue as a billing inquiry, and provides a professional and relevant draft response to the customer's question.",
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
       "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.24
+      "latency_seconds": 1.13
     },
     {
       "test_id": "T1-TC4",
@@ -262,14 +262,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "450 chars",
+          "actual": "457 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "345 chars",
+          "actual": "332 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -280,12 +280,12 @@
           "message": "Prompt version must be echoed in output for auditability"
         }
       ],
-      "llm_judge_score": 0.9,
-      "llm_judge_rationale": "The triage output accurately assesses the urgency, categorizes the issue correctly, and provides a professional draft response, but minor improvements could be made for perfection, such as fully detailing the workaround in the draft response.",
-      "quality_score": 0.882,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 0.875,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.23
+      "latency_seconds": 1.27
     },
     {
       "test_id": "T1-TC5",
@@ -325,7 +325,7 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "426 chars",
+          "actual": "435 chars",
           "message": "Draft response must be a substantive message"
         },
         {
@@ -343,12 +343,12 @@
           "message": "Prompt version must be echoed in output for auditability"
         }
       ],
-      "llm_judge_score": 0.9,
-      "llm_judge_rationale": "The triage output accurately categorizes the ticket as a feature request with appropriate urgency and product area, and the draft response is professional, but the responder is incorrectly assigned to Tier-1 Support, which typically handles more urgent issues.",
-      "quality_score": 0.97,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.29
+      "latency_seconds": 1.2
     },
     {
       "test_id": "T1-TC6-ADV",
@@ -367,14 +367,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "639 chars",
+          "actual": "439 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "376 chars",
+          "actual": "288 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -385,12 +385,12 @@
           "message": "Prompt version must be echoed in output for auditability"
         }
       ],
-      "llm_judge_score": 0.8,
-      "llm_judge_rationale": "The triage output is mostly accurate and professional, but the product area is uncertain and the draft response could be more specific about next steps or troubleshooting questions.",
-      "quality_score": 0.94,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.54
+      "latency_seconds": 1.28
     },
     {
       "test_id": "T2-TC1",
@@ -451,7 +451,7 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:34:33.324873+00:00",
+          "actual": "2026-08-09T11:47:32.524189+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
@@ -462,12 +462,12 @@
           "message": "temperature=0.0 must produce identical output for the same input"
         }
       ],
-      "llm_judge_score": 0.9,
-      "llm_judge_rationale": "The brief is accurate, actionable, and professional, with well-evidenced risks, but lacks direct quotes from the tickets to support the risk statements.",
-      "quality_score": 0.892,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 0.889,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.73
+      "latency_seconds": 1.56
     },
     {
       "test_id": "T2-TC2",
@@ -514,23 +514,23 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:34:40.905308+00:00",
+          "actual": "2026-08-09T11:47:41.886298+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
           "check_name": "output_is_deterministic",
-          "passed": true,
+          "passed": false,
           "expected": "same executive_summary on second run",
-          "actual": "match",
+          "actual": "different output",
           "message": "temperature=0.0 must produce identical output for the same input"
         }
       ],
-      "llm_judge_score": 0.8,
-      "llm_judge_rationale": "The brief is accurate, actionable, and professional, but lacks specific risk evidence and ticket quotes to support the healthy account status and low renewal risk assessment.",
-      "quality_score": 0.94,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 0.857,
       "passed": true,
       "error": null,
-      "latency_seconds": 4.43
+      "latency_seconds": 4.56
     },
     {
       "test_id": "T2-TC3",
@@ -556,7 +556,7 @@
           "check_name": "executive_summary_substantive",
           "passed": true,
           "expected": ">100 chars",
-          "actual": "559 chars",
+          "actual": "503 chars",
           "message": "Executive summary must contain meaningful content"
         },
         {
@@ -591,7 +591,7 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:34:51.696918+00:00",
+          "actual": "2026-08-09T11:47:50.258973+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
@@ -602,12 +602,12 @@
           "message": "temperature=0.0 must produce identical output for the same input"
         }
       ],
-      "llm_judge_score": 0.8,
-      "llm_judge_rationale": "The brief is accurate, actionable, and professional, but it lacks specific ticket quotes to evidence the risks, which would further strengthen the analysis and recommendations.",
-      "quality_score": 0.862,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 0.889,
       "passed": true,
       "error": null,
-      "latency_seconds": 5.79
+      "latency_seconds": 4.9
     },
     {
       "test_id": "T2-TC4",
@@ -626,14 +626,14 @@
           "check_name": "executive_summary_length",
           "passed": true,
           "expected": ">=2 sentences",
-          "actual": "4 sentences",
+          "actual": "5 sentences",
           "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
         },
         {
           "check_name": "executive_summary_substantive",
           "passed": true,
           "expected": ">100 chars",
-          "actual": "526 chars",
+          "actual": "478 chars",
           "message": "Executive summary must contain meaningful content"
         },
         {
@@ -654,7 +654,7 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:35:02.216551+00:00",
+          "actual": "2026-08-09T11:47:59.336737+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
@@ -665,12 +665,12 @@
           "message": "temperature=0.0 must produce identical output for the same input"
         }
       ],
-      "llm_judge_score": 0.8,
-      "llm_judge_rationale": "The brief is accurate, actionable, and professional, but lacks specific details on the open tickets and does not include any quoted text from the tickets to support the risks, which are also not flagged.",
-      "quality_score": 0.84,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 0.857,
       "passed": true,
       "error": null,
-      "latency_seconds": 4.36
+      "latency_seconds": 4.32
     },
     {
       "test_id": "T2-TC5",
@@ -689,14 +689,14 @@
           "check_name": "executive_summary_length",
           "passed": true,
           "expected": ">=3 sentences",
-          "actual": "4 sentences",
+          "actual": "5 sentences",
           "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
         },
         {
           "check_name": "executive_summary_substantive",
           "passed": true,
           "expected": ">100 chars",
-          "actual": "581 chars",
+          "actual": "548 chars",
           "message": "Executive summary must contain meaningful content"
         },
         {
@@ -731,7 +731,7 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:35:12.454662+00:00",
+          "actual": "2026-08-09T11:48:07.088077+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
@@ -742,12 +742,12 @@
           "message": "temperature=0.0 must produce identical output for the same input"
         }
       ],
-      "llm_judge_score": 0.8,
-      "llm_judge_rationale": "The brief is accurate, actionable, and professional, but it lacks specific ticket quotes to evidence the negative sentiment in support interactions, which would further strengthen the risk assessment.",
-      "quality_score": 0.862,
+      "llm_judge_score": null,
+      "llm_judge_rationale": "",
+      "quality_score": 0.889,
       "passed": true,
       "error": null,
-      "latency_seconds": 5.45
+      "latency_seconds": 4.4
     },
     {
       "test_id": "T2-TC6-ADV",
@@ -768,7 +768,7 @@
       "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 0.01
+      "latency_seconds": 0.0
     }
   ]
 }

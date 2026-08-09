@@ -342,6 +342,8 @@ Task-1/
 
 ## Key Design Decisions
 
+> 📄 See [DESIGN.md](DESIGN.md) for the full Task 4 design note covering failure modes, latency trade-offs, PII handling, and scaling.
+
 ### BM25 over vector embeddings (Task 1 RAG)
 
 Technical support text is keyword-dense — error codes like `ERR_CONNECTION_TIMEOUT`, product names, module names. BM25 (`rank-bm25`) retrieves the exact error reference reliably without a GPU, without an embeddings API call, and with near-zero latency. For a production KB with thousands of documents, a hybrid BM25 + dense retrieval approach would be the right evolution.
