@@ -13,20 +13,6 @@ A two-task AI system built for internal tooling teams at a B2B SaaS company. It 
 
 ---
 
-## Live Demo
-
-```bash
-# UI — all three tasks in one interface
-streamlit run app.py
-```
-
-Opens at `http://localhost:8501` with three tabs:
-- **🎫 Ticket Triage** — paste any ticket, get instant structured triage
-- **📋 TAM Account Brief** — pick an account, get a full QBR-ready brief
-- **📊 Evaluation Harness** — run Task 3 eval directly from the browser, download reports
-
----
-
 ## Architecture
 
 ### Task 1 — Ticket Triage Pipeline
@@ -91,7 +77,8 @@ account_id
 ### 1. Install dependencies
 
 ```bash
-cd Task-1
+git clone https://github.com/pawan123-psl/US-Delivery-.git
+cd US-Delivery-
 pip install -r requirements.txt
 ```
 
@@ -105,15 +92,15 @@ copy .env.example .env
 cp .env.example .env
 ```
 
-Edit `.env` and set your Groq API key:
+Edit `.env` — **only one value is required:**
 
 ```env
 GROQ_API_KEY=gsk_your_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
-DATA_DIR=../Task/resources/starter-repo
 ```
 
 Get a **free** Groq API key at [console.groq.com](https://console.groq.com) — no credit card required.
+
+> **No data setup needed.** The repo includes a bundled `data/` folder with all accounts, tickets, and knowledge-base files. It is detected automatically — no `DATA_DIR` configuration required.
 
 ### 3. Verify everything loads
 
@@ -122,6 +109,19 @@ python -c "import triage; import account_brief; import api; from models import A
 ```
 
 Expected output: `ALL OK`
+
+---
+## Live Demo
+
+```bash
+# UI — all three tasks in one interface
+streamlit run app.py
+```
+
+Opens at `http://localhost:8501` with three tabs:
+- **🎫 Ticket Triage** — paste any ticket, get instant structured triage
+- **📋 TAM Account Brief** — pick an account, get a full QBR-ready brief
+- **📊 Evaluation Harness** — run Task 3 eval directly from the browser, download reports
 
 ---
 

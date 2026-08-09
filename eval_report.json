@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-08-09T11:48:11.609777+00:00",
+  "generated_at": "2026-08-09T13:45:56.034838+00:00",
   "total_tests": 12,
   "passed": 12,
   "failed": 0,
   "task1_score": 0.958,
-  "task2_score": 0.897,
-  "overall_score": 0.928,
+  "task2_score": 0.921,
+  "overall_score": 0.939,
   "results": [
     {
       "test_id": "T1-TC1",
@@ -52,14 +52,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "449 chars",
+          "actual": "502 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "340 chars",
+          "actual": "290 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -75,7 +75,7 @@
       "quality_score": 0.875,
       "passed": true,
       "error": null,
-      "latency_seconds": 2.9
+      "latency_seconds": 2.98
     },
     {
       "test_id": "T1-TC2",
@@ -122,14 +122,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "549 chars",
+          "actual": "620 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "284 chars",
+          "actual": "360 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -145,7 +145,7 @@
       "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.32
+      "latency_seconds": 1.36
     },
     {
       "test_id": "T1-TC3",
@@ -192,14 +192,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "446 chars",
+          "actual": "527 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "267 chars",
+          "actual": "373 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -215,7 +215,7 @@
       "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.13
+      "latency_seconds": 1.38
     },
     {
       "test_id": "T1-TC4",
@@ -285,7 +285,7 @@
       "quality_score": 0.875,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.27
+      "latency_seconds": 1.2
     },
     {
       "test_id": "T1-TC5",
@@ -325,7 +325,7 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "435 chars",
+          "actual": "460 chars",
           "message": "Draft response must be a substantive message"
         },
         {
@@ -348,7 +348,7 @@
       "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.2
+      "latency_seconds": 1.16
     },
     {
       "test_id": "T1-TC6-ADV",
@@ -367,14 +367,14 @@
           "check_name": "draft_response_substantive",
           "passed": true,
           "expected": ">50 chars",
-          "actual": "439 chars",
+          "actual": "537 chars",
           "message": "Draft response must be a substantive message"
         },
         {
           "check_name": "urgency_reasoning_present",
           "passed": true,
           "expected": ">20 chars",
-          "actual": "288 chars",
+          "actual": "330 chars",
           "message": "Urgency reasoning must explain the classification"
         },
         {
@@ -390,7 +390,7 @@
       "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.28
+      "latency_seconds": 2.61
     },
     {
       "test_id": "T2-TC1",
@@ -416,7 +416,7 @@
           "check_name": "executive_summary_substantive",
           "passed": true,
           "expected": ">100 chars",
-          "actual": "598 chars",
+          "actual": "646 chars",
           "message": "Executive summary must contain meaningful content"
         },
         {
@@ -451,7 +451,7 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:47:32.524189+00:00",
+          "actual": "2026-08-09T13:45:16.110477+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
@@ -467,7 +467,7 @@
       "quality_score": 0.889,
       "passed": true,
       "error": null,
-      "latency_seconds": 1.56
+      "latency_seconds": 5.79
     },
     {
       "test_id": "T2-TC2",
@@ -514,23 +514,23 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:47:41.886298+00:00",
+          "actual": "2026-08-09T13:45:26.851890+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
           "check_name": "output_is_deterministic",
-          "passed": false,
+          "passed": true,
           "expected": "same executive_summary on second run",
-          "actual": "different output",
+          "actual": "match",
           "message": "temperature=0.0 must produce identical output for the same input"
         }
       ],
       "llm_judge_score": null,
       "llm_judge_rationale": "",
-      "quality_score": 0.857,
+      "quality_score": 1.0,
       "passed": true,
       "error": null,
-      "latency_seconds": 4.56
+      "latency_seconds": 6.32
     },
     {
       "test_id": "T2-TC3",
@@ -549,14 +549,14 @@
           "check_name": "executive_summary_length",
           "passed": true,
           "expected": ">=3 sentences",
-          "actual": "4 sentences",
+          "actual": "5 sentences",
           "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
         },
         {
           "check_name": "executive_summary_substantive",
           "passed": true,
           "expected": ">100 chars",
-          "actual": "503 chars",
+          "actual": "615 chars",
           "message": "Executive summary must contain meaningful content"
         },
         {
@@ -591,7 +591,7 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:47:50.258973+00:00",
+          "actual": "2026-08-09T13:45:34.350850+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
@@ -607,7 +607,7 @@
       "quality_score": 0.889,
       "passed": true,
       "error": null,
-      "latency_seconds": 4.9
+      "latency_seconds": 5.18
     },
     {
       "test_id": "T2-TC4",
@@ -633,7 +633,7 @@
           "check_name": "executive_summary_substantive",
           "passed": true,
           "expected": ">100 chars",
-          "actual": "478 chars",
+          "actual": "460 chars",
           "message": "Executive summary must contain meaningful content"
         },
         {
@@ -654,7 +654,7 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:47:59.336737+00:00",
+          "actual": "2026-08-09T13:45:43.209472+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
@@ -670,7 +670,7 @@
       "quality_score": 0.857,
       "passed": true,
       "error": null,
-      "latency_seconds": 4.32
+      "latency_seconds": 5.17
     },
     {
       "test_id": "T2-TC5",
@@ -689,28 +689,28 @@
           "check_name": "executive_summary_length",
           "passed": true,
           "expected": ">=3 sentences",
-          "actual": "5 sentences",
+          "actual": "4 sentences",
           "message": "Executive summary must be a substantial paragraph (3\u20135 sentences)"
         },
         {
           "check_name": "executive_summary_substantive",
           "passed": true,
           "expected": ">100 chars",
-          "actual": "548 chars",
+          "actual": "561 chars",
           "message": "Executive summary must contain meaningful content"
         },
         {
           "check_name": "risks_present_for_at_risk_account",
           "passed": true,
           "expected": "at least 1 risk",
-          "actual": "2 risks",
+          "actual": "3 risks",
           "message": "At-risk accounts should have flagged risks"
         },
         {
           "check_name": "risk_quotes_present",
           "passed": true,
           "expected": "all risks have ticket_quote >10 chars",
-          "actual": "2/2 have quotes",
+          "actual": "3/3 have quotes",
           "message": "Every risk must include a direct ticket quote"
         },
         {
@@ -731,7 +731,7 @@
           "check_name": "generated_at_valid_timestamp",
           "passed": true,
           "expected": "valid ISO-8601 datetime",
-          "actual": "2026-08-09T11:48:07.088077+00:00",
+          "actual": "2026-08-09T13:45:51.593772+00:00",
           "message": "generated_at must be a valid UTC ISO-8601 timestamp"
         },
         {
@@ -747,7 +747,7 @@
       "quality_score": 0.889,
       "passed": true,
       "error": null,
-      "latency_seconds": 4.4
+      "latency_seconds": 4.61
     },
     {
       "test_id": "T2-TC6-ADV",
